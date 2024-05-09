@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user.repository;
 
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,22 +10,22 @@ import java.util.Map;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
-    private final Map<Long, UserDto> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
     private long id = 1;
 
     @Override
-    public List<UserDto> getAll() {
+    public List<User> getAll() {
         return new ArrayList<>(users.values());
     }
 
     @Override
-    public UserDto getById(long id) {
+    public User getById(long id) {
         return users.get(id);
     }
 
     @Override
-    public UserDto update(long id, UserDto user) {
-        UserDto updatedUser = getById(id);
+    public User update(long id, User user) {
+        User updatedUser = getById(id);
         if (user.getName() != null) {
             updatedUser.setName(user.getName());
         }
@@ -41,7 +41,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public UserDto create(UserDto user) {
+    public User create(User user) {
         user.setId(generateId());
         users.put(user.getId(), user);
         return user;

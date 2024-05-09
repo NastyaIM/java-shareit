@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.Data;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -21,5 +21,5 @@ public class Item {
     private String description;
     @NotNull
     private Boolean available;
-    private UserDto owner;
+    private User owner;
 }
