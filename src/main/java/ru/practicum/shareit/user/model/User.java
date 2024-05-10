@@ -1,10 +1,10 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.user.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.practicum.shareit.user.model.User;
+import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
@@ -12,16 +12,14 @@ import javax.validation.constraints.Positive;
  * TODO Sprint add-controllers.
  */
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
-public class Item {
+public class User {
     @Positive
     private Long id;
-    @NotEmpty
-    @NotNull
     private String name;
+    @Email
+    @EqualsAndHashCode.Include
     @NotNull
-    private String description;
-    @NotNull
-    private Boolean available;
-    private User owner;
+    private String email;
 }
