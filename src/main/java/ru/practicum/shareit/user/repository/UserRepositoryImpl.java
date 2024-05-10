@@ -1,12 +1,14 @@
 package ru.practicum.shareit.user.repository;
 
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -14,25 +16,28 @@ public class UserRepositoryImpl implements UserRepository {
     private long id = 1;
 
     @Override
-    public List<User> getAll() {
-        return new ArrayList<>(users.values());
+    public List<UserDto> getAll() {
+        return users.values().stream()
+                .map(UserMapper::toUserDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public User getById(long id) {
-        return users.get(id);
+    public UserDto getById(long id) {
+        User user = users.get(id);
+        return user != null ? UserMapper.toUserDto(user) : null;
     }
 
     @Override
-    public User update(long id, User user) {
-        User updatedUser = getById(id);
+    public UserDto update(long id, UserDto user) {
+        User updatedUser = users.get(id);
         if (user.getName() != null) {
             updatedUser.setName(user.getName());
         }
         if (user.getEmail() != null) {
             updatedUser.setEmail(user.getEmail());
         }
-        return updatedUser;
+        return UserMapper.toUserDto(updatedUser);
     }
 
     @Override
@@ -41,9 +46,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User create(User user) {
+    public UserDto create(UserDto user) {
         user.setId(generateId());
-        users.put(user.getId(), user);
+        users.put(user.getId(), UserMapper.toUser(user));
         return user;
     }
 

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.PathConstants;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
@@ -21,19 +21,19 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<User> getAll() {
+    public List<UserDto> getAll() {
         log.info("Получение списка пользователей");
         return userService.getAll();
     }
 
     @GetMapping(PathConstants.BY_ID)
-    public User getById(@PathVariable long id) {
+    public UserDto getById(@PathVariable long id) {
         log.info("Получение пользователя по id");
         return userService.getById(id);
     }
 
     @PatchMapping(PathConstants.BY_ID)
-    public User update(@PathVariable long id, @RequestBody User user) {
+    public UserDto update(@PathVariable long id, @RequestBody UserDto user) {
         log.info("Обновление пользователя");
         return userService.update(id, user);
     }
@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@Valid @RequestBody User user) {
+    public UserDto create(@Valid @RequestBody UserDto user) {
         log.info("Добавление нового пользователя");
         return userService.create(user);
     }

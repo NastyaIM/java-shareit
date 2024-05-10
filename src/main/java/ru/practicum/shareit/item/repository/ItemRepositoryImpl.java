@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.repository;
 
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.HashMap;
@@ -14,20 +16,22 @@ public class ItemRepositoryImpl implements ItemRepository {
     private long id = 1;
 
     @Override
-    public List<Item> getAllUserItems(long userId) {
+    public List<ItemDto> getAllUserItems(long userId) {
         return items.values().stream()
-                .filter(itemDto -> itemDto.getOwner().getId() == userId)
+                .filter(item -> item.getOwner().getId() == userId)
+                .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Item getById(long id) {
-        return items.get(id);
+    public ItemDto getById(long id) {
+        Item item = items.get(id);
+        return item != null ? ItemMapper.toItemDto(item) : null;
     }
 
     @Override
-    public Item update(long id, Item item) {
-        Item updatedItem = getById(id);
+    public ItemDto update(long id, ItemDto item) {
+        Item updatedItem = items.get(id);
         if (item.getName() != null) {
             updatedItem.setName(item.getName());
         }
@@ -37,23 +41,24 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (item.getAvailable() != null) {
             updatedItem.setAvailable(item.getAvailable());
         }
-        return updatedItem;
+        return ItemMapper.toItemDto(updatedItem);
     }
 
     @Override
-    public Item create(Item item) {
+    public ItemDto create(ItemDto item) {
         item.setId(generateId());
-        items.put(item.getId(), item);
+        items.put(item.getId(), ItemMapper.toItem(item));
         return item;
     }
 
     @Override
-    public List<Item> search(String query) {
+    public List<ItemDto> search(String query) {
         String lowerCaseQuery = query.toLowerCase();
         return items.values().stream()
                 .filter(item -> (item.getName().toLowerCase().contains(lowerCaseQuery)
                         || item.getDescription().toLowerCase().contains(lowerCaseQuery))
                         && item.getAvailable())
+                .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 

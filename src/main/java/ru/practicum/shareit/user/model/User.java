@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,6 +13,7 @@ import javax.validation.constraints.Positive;
  */
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@AllArgsConstructor
 public class User {
     @Positive
     private Long id;
