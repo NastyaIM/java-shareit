@@ -36,10 +36,12 @@ public class BookingServiceImpl implements BookingService {
         Item item = itemRepository.findById(bookingDto.getItemId())
                 .orElseThrow(() -> new NotFoundException("Предмет не найден"));
 
-        if (booker.getId() == item.getOwner().getId()) {
+        if (booker.getId().equals(item.getOwner().getId())) {
             throw new NotFoundException("Владелец вещи не может ее забронировать");
         }
-        if (!item.getAvailable()) throw new ValidationException("Предмет нельзя забронировать");
+        if (!item.getAvailable()) {
+            throw new ValidationException("Предмет нельзя забронировать");
+        }
 
         bookingDto.setBooker(UserMapper.toUserDto(booker));
         bookingDto.setStatus(BookingStatus.WAITING);
