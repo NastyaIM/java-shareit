@@ -4,20 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.practicum.shareit.booking.dto.BookingDtoItem;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemDto {
+public class ItemDtoGetResponse {
     @Positive
     private Long id;
     @NotEmpty
@@ -27,5 +26,8 @@ public class ItemDto {
     private String description;
     @NotNull
     private Boolean available;
+    private BookingDtoItem lastBooking;
+    private BookingDtoItem nextBooking;
     private UserDto owner;
+    private List<CommentDto> comments;
 }

@@ -21,15 +21,15 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<UserDto> getAll() {
+    public List<UserDto> findAll() {
         log.info("Получение списка пользователей");
-        return userService.getAll();
+        return userService.findAll();
     }
 
     @GetMapping(PathConstants.BY_ID)
-    public UserDto getById(@PathVariable long id) {
+    public UserDto findById(@PathVariable long id) {
         log.info("Получение пользователя по id");
-        return userService.getById(id);
+        return userService.findById(id);
     }
 
     @PatchMapping(PathConstants.BY_ID)
@@ -45,8 +45,8 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto create(@Valid @RequestBody UserDto user) {
+    public UserDto save(@Valid @RequestBody UserDto user) {
         log.info("Добавление нового пользователя");
-        return userService.create(user);
+        return userService.save(user);
     }
 }
