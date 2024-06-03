@@ -23,9 +23,11 @@ public class ItemController {
     private ItemService itemService;
 
     @GetMapping
-    public List<ItemDtoGetResponse> getAllUserItems(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemDtoGetResponse> getAllUserItems(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                    @RequestParam(defaultValue = "0") int from,
+                                                    @RequestParam(defaultValue = "10") int size) {
         log.info("Получение списка всех предметов");
-        return itemService.getAllUserItems(userId);
+        return itemService.getAllUserItems(userId, from, size);
     }
 
     @GetMapping(PathConstants.BY_ID)
@@ -50,9 +52,11 @@ public class ItemController {
     }
 
     @GetMapping(PathConstants.ITEMS_SEARCH)
-    public List<ItemDto> search(@RequestParam String text) {
+    public List<ItemDto> search(@RequestParam String text,
+                                @RequestParam(defaultValue = "0") int from,
+                                @RequestParam(defaultValue = "10") int size) {
         log.info("Поиск по названию или описанию");
-        return itemService.search(text);
+        return itemService.search(text, from, size);
     }
 
     @PostMapping(PathConstants.BY_ID + PathConstants.ITEMS_COMMENTS)

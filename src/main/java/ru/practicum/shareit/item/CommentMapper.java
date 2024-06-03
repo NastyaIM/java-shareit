@@ -12,7 +12,7 @@ public class CommentMapper {
         return new Comment(
                 commentDto.getId(),
                 commentDto.getText(),
-                ItemMapper.toItem(commentDto.getItem()),
+                ItemMapper.toItem(commentDto.getItem(), null),
                 author,
                 commentDto.getCreated()
         );

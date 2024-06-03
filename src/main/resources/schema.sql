@@ -2,6 +2,7 @@ drop table IF EXISTS users CASCADE;
 drop table IF EXISTS items CASCADE;
 drop table IF EXISTS bookings CASCADE;
 drop table IF EXISTS comments CASCADE;
+drop table IF EXISTS requests CASCADE;
 
 create table if not exists users (
   id bigint GENERATED always AS IDENTITY NOT NULL,
@@ -11,14 +12,25 @@ create table if not exists users (
   constraint UQ_USER_EMAIL unique (email)
 );
 
+create table if not exists requests (
+  id bigint GENERATED always AS IDENTITY NOT NULL,
+  description varchar(300) not null,
+  requester_id bigint,
+  created TIMESTAMP WITHOUT TIME ZONE,
+  constraint pk_requests primary key (id),
+  constraint fk_requests_to_users foreign key(requester_id) references users(id)
+);
+
 create table if not exists items (
   id bigint GENERATED always AS IDENTITY NOT NULL,
   name_item varchar(255) not null,
   description varchar(300) not null,
   available boolean not null,
   owner_id bigint,
+  request_id bigint,
   constraint pk_item primary key (id),
-  constraint fk_items_to_users foreign key(owner_id) references users(id)
+  constraint fk_items_to_users foreign key(owner_id) references users(id),
+  constraint fk_items_to_requests foreign key(request_id) references requests(id)
 );
 
 create table if not exists bookings (

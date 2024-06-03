@@ -39,21 +39,25 @@ public class BookingController {
     @GetMapping(PathConstants.BY_ID)
     public BookingDtoResponse get(@RequestHeader("X-Sharer-User-Id") long userId,
                                   @PathVariable long id) {
-        log.info("Получение данный о бронировании по id");
+        log.info("Получение данных о бронировании по id");
         return bookingService.get(userId, id);
     }
 
     @GetMapping
     public List<BookingDtoResponse> getAll(@RequestHeader("X-Sharer-User-Id") long userId,
-                                           @RequestParam(defaultValue = "ALL") String state) {
+                                           @RequestParam(defaultValue = "ALL") String state,
+                                           @RequestParam(defaultValue = "0") int from,
+                                           @RequestParam(defaultValue = "10") int size) {
         log.info("Получение бронирований пользователя userId");
-        return bookingService.getAll(userId, state);
+        return bookingService.getAll(userId, state, from, size);
     }
 
     @GetMapping(PathConstants.BOOKINGS_OWNER)
     public List<BookingDtoResponse> getAllOwner(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                @RequestParam(defaultValue = "ALL") String state) {
+                                                @RequestParam(defaultValue = "ALL") String state,
+                                                @RequestParam(defaultValue = "0") int from,
+                                                @RequestParam(defaultValue = "10") int size) {
         log.info("Получение бронирований владельца");
-        return bookingService.getAllOwner(userId, state);
+        return bookingService.getAllOwner(userId, state, from, size);
     }
 }

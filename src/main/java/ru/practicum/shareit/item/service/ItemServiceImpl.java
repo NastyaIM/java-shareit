@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingStatus;
@@ -18,6 +20,9 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.ItemRequestRepository;
+import ru.practicum.shareit.request.RequestMapper;
+import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -34,11 +39,15 @@ public class ItemServiceImpl implements ItemService {
     private UserRepository userRepository;
     private BookingRepository bookingRepository;
     private CommentRepository commentRepository;
+    private ItemRequestRepository itemRequestRepository;
 
     @Override
-    public List<ItemDtoGetResponse> getAllUserItems(long userId) {
-        List<Item> items = itemRepository.findAllByOwnerId(userId);
-        return items.stream()
+    public List<ItemDtoGetResponse> getAllUserItems(long userId, int from, int size) {
+        if (from < 0 || size < 0) {
+            throw new ValidationException("from и size не могут быть меньше 0");
+        }
+        Page<Item> items = itemRepository.findAllByOwnerId(userId, PageRequest.of(from / size, size));
+        return items.getContent().stream()
                 .map(item -> {
                     BookingDtoItem nextBooking = getNextBooking(item.getId());
                     BookingDtoItem lastBooking = getLastBooking(item.getId());
@@ -85,15 +94,26 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto create(ItemDto itemDto, long userId) {
         itemDto.setOwner(UserMapper.toUserDto(userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"))));
-        return ItemMapper.toItemDto(itemRepository.save(ItemMapper.toItem(itemDto)));
+
+        ItemRequestDto request = itemDto.getRequestId() != null ? RequestMapper.toRequestDto(itemRequestRepository.findById(itemDto.getRequestId())
+                .orElseThrow(() -> new NotFoundException("Запрос не найден"))) : null;
+
+        Item item = ItemMapper.toItem(itemDto, request);
+
+        return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
     @Override
-    public List<ItemDto> search(String text) {
+    public List<ItemDto> search(String text, int from, int size) {
         if (text.isEmpty() || text.isBlank()) {
             return new ArrayList<>();
         }
-        return itemRepository.search(text).stream()
+        if (from < 0 || size < 0) {
+            throw new ValidationException("from и size не могут быть меньше 0");
+        }
+
+        return itemRepository.search(text, PageRequest.of(from, size)).getContent()
+                .stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }

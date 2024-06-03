@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,4 +29,6 @@ public class ItemDto {
     @NotNull
     private Boolean available;
     private UserDto owner;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long requestId;
 }
