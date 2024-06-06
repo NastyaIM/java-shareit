@@ -1,8 +1,8 @@
-drop table IF EXISTS users CASCADE;
 drop table IF EXISTS items CASCADE;
 drop table IF EXISTS bookings CASCADE;
 drop table IF EXISTS comments CASCADE;
 drop table IF EXISTS requests CASCADE;
+drop table IF EXISTS users CASCADE;
 
 create table if not exists users (
   id bigint GENERATED always AS IDENTITY NOT NULL,

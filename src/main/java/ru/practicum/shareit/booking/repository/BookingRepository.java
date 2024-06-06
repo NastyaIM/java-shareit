@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.model.Booking;
@@ -37,5 +38,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByItemIdAndStartIsBeforeOrderByStartDesc(long itemId, LocalDateTime start);
 
     List<Booking> findByItemIdAndStartIsAfterOrderByStartAsc(long itemId, LocalDateTime start);
-    List<Booking> findByBookerIdAndEndIsBeforeOrderByStartDesc(long userId, LocalDateTime end);
+
+    @Query(value = "select b.* from bookings as b " +
+            "join items as i on i.id = b.item_id " +
+            "where b.booker_id = ?1 and i.id = ?2 " +
+            "and b.status = 'APPROVED' " +
+            "and b.end_date < ?3 ", nativeQuery = true)
+    List<Booking> findAllByUserBookings(long userId, long id, LocalDateTime end);
 }

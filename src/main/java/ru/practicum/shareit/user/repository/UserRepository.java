@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select id from User where id != ?1")
-    List<Long> findIds(long id);
+    List<Long> findIdsAllOtherUsers(long id);
 }

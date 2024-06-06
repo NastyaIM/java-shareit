@@ -23,6 +23,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.request.RequestMapper;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -42,10 +43,9 @@ public class ItemServiceImpl implements ItemService {
     private ItemRequestRepository itemRequestRepository;
 
     @Override
-    public List<ItemDtoGetResponse> getAllUserItems(long userId, int from, int size) {
-        if (from < 0 || size < 0) {
-            throw new ValidationException("from и size не могут быть меньше 0");
-        }
+    public List<ItemDtoGetResponse> findAllUserItems(long userId, int from, int size) {
+        checkPageParams(from, size);
+
         Page<Item> items = itemRepository.findAllByOwnerId(userId, PageRequest.of(from / size, size));
         return items.getContent().stream()
                 .map(item -> {
@@ -58,7 +58,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDtoGetResponse getById(long userId, long id) {
+    public ItemDtoGetResponse findById(long userId, long id) {
         Item item = checkNotFound(id);
 
         BookingDtoItem nextBooking = null;
@@ -69,6 +69,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         List<Comment> comments = commentRepository.findByItemId(id);
+
         return ItemMapper.toItemDtoBookings(item, lastBooking, nextBooking, comments);
     }
 
@@ -87,20 +88,26 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
         }
-        return ItemMapper.toItemDto(itemRepository.save(item));
+        Item it = itemRepository.save(item);
+        return ItemMapper.toItemDto(it);
     }
 
     @Override
-    public ItemDto create(ItemDto itemDto, long userId) {
+    public ItemDto save(ItemDto itemDto, long userId) {
         itemDto.setOwner(UserMapper.toUserDto(userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"))));
 
-        ItemRequestDto request = itemDto.getRequestId() != null ? RequestMapper.toRequestDto(itemRequestRepository.findById(itemDto.getRequestId())
-                .orElseThrow(() -> new NotFoundException("Запрос не найден"))) : null;
+        ItemRequestDto requestDto = null;
 
-        Item item = ItemMapper.toItem(itemDto, request);
+        if (itemDto.getRequestId() != null) {
+            ItemRequest request = itemRequestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException(""));
+            requestDto = RequestMapper.toRequestDto(request);
+        }
 
-        return ItemMapper.toItemDto(itemRepository.save(item));
+        Item item = itemRepository.save(ItemMapper.toItem(itemDto, requestDto));
+
+        return ItemMapper.toItemDto(item);
     }
 
     @Override
@@ -108,9 +115,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.isEmpty() || text.isBlank()) {
             return new ArrayList<>();
         }
-        if (from < 0 || size < 0) {
-            throw new ValidationException("from и size не могут быть меньше 0");
-        }
+        checkPageParams(from, size);
 
         return itemRepository.search(text, PageRequest.of(from, size)).getContent()
                 .stream()
@@ -121,25 +126,15 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public CommentDto addComment(long userId, long id, CommentDto comment) {
         Item item = checkNotFound(id);
-        List<Booking> bookings = bookingRepository.findByBookerIdAndEndIsBeforeOrderByStartDesc(userId, LocalDateTime.now());
-
-        boolean flag = false;
-        for (Booking booking : bookings) {
-            if (booking.getItem().getId() == id) {
-                flag = true;
-                break;
-            }
-        }
-        if (!flag) {
-            throw new ValidationException("Пользователь еще не бронировал этот предмет");
-        }
         User author = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-
+        List<Booking> bookings = bookingRepository.findAllByUserBookings(userId, item.getId(), LocalDateTime.now());
+        if (bookings.isEmpty()) {
+            throw new ValidationException("Пользователь еще не бронировал этот предмет");
+        }
         comment.setItem(ItemMapper.toItemDto(item));
         comment.setAuthorName(author.getName());
         comment.setCreated(LocalDateTime.now());
-
         return CommentMapper.toCommentDto(commentRepository.save(CommentMapper.toComment(comment, author)));
     }
 
@@ -167,5 +162,11 @@ public class ItemServiceImpl implements ItemService {
             return bookingDtoItem;
         }
         return null;
+    }
+
+    private void checkPageParams(int from, int size) {
+        if (from < 0 || size < 0) {
+            throw new ValidationException("from и size не могут быть меньше 0");
+        }
     }
 }

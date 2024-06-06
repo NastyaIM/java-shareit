@@ -20,6 +20,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +31,7 @@ public class BookingServiceImpl implements BookingService {
     private BookingRepository bookingRepository;
 
     @Override
-    public BookingDtoResponse create(long userId, BookingDto bookingDto) {
+    public BookingDtoResponse save(long userId, BookingDto bookingDto) {
         checkDateTime(bookingDto.getStart(), bookingDto.getEnd());
 
         User booker = userRepository.findById(userId)
@@ -47,28 +48,34 @@ public class BookingServiceImpl implements BookingService {
 
         bookingDto.setBooker(UserMapper.toUserDto(booker));
         bookingDto.setStatus(BookingStatus.WAITING);
+        Booking booking = bookingRepository.save(BookingMapper.toBooking(bookingDto, item));
 
-        return BookingMapper.toBookingDtoResponse(bookingRepository.save(BookingMapper.toBooking(bookingDto, item)));
+        return BookingMapper.toBookingDtoResponse(booking);
     }
 
     @Override
     public BookingDtoResponse approve(long userId, long id, boolean approved) {
         Booking booking = checkNotFound(id);
+        Optional<User> owner = userRepository.findById(userId);
 
-        if (!(userRepository.findById(userId).isPresent() && userId == booking.getItem().getOwner().getId())) {
+        if (!(owner.isPresent() && userId == booking.getItem().getOwner().getId())) {
             throw new NotFoundException("Подтверждать бронирование может только владелец вещи");
         }
         if (approved && booking.getStatus() == BookingStatus.APPROVED) {
             throw new ValidationException("Нельзя подтвердить подтвержденное бронирование");
         }
 
-        if (approved) booking.setStatus(BookingStatus.APPROVED);
-        else booking.setStatus(BookingStatus.REJECTED);
+        if (approved) {
+            booking.setStatus(BookingStatus.APPROVED);
+        } else {
+            booking.setStatus(BookingStatus.REJECTED);
+        }
+
         return BookingMapper.toBookingDtoResponse(bookingRepository.save(booking));
     }
 
     @Override
-    public BookingDtoResponse get(long userId, long id) {
+    public BookingDtoResponse findById(long userId, long id) {
         Booking booking = checkNotFound(id);
 
         if (!(userRepository.findById(userId).isPresent()
@@ -82,11 +89,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoResponse> getAll(long userId, String state, int from, int size) {
-        if (from < 0 || size < 0) {
-            throw new ValidationException("from и size не могут быть меньше 0");
-        }
-
+    public List<BookingDtoResponse> findAll(long userId, String state, int from, int size) {
+        checkPageParams(from, size);
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Page<Booking> bookings;
@@ -124,10 +128,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoResponse> getAllOwner(long userId, String state, int from, int size) {
-        if (from < 0 || size < 0) {
-            throw new ValidationException("from и size не могут быть меньше 0");
-        }
+    public List<BookingDtoResponse> findAllOwner(long userId, String state, int from, int size) {
+        checkPageParams(from, size);
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Page<Booking> bookings;
@@ -171,5 +173,11 @@ public class BookingServiceImpl implements BookingService {
     private Booking checkNotFound(long id) {
         return bookingRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Бронирование не найдено"));
+    }
+
+    private void checkPageParams(int from, int size) {
+        if (from < 0 || size < 0) {
+            throw new ValidationException("from и size не могут быть меньше 0");
+        }
     }
 }

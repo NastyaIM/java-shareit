@@ -14,8 +14,8 @@ public class BookingMapper {
                 booking.getId(),
                 booking.getStart(),
                 booking.getEnd(),
-                booking.getItem().getId(),
-                UserMapper.toUserDto(booking.getBooker()),
+                booking.getItem() != null ? booking.getItem().getId() : null,
+                booking.getBooker() != null ? UserMapper.toUserDto(booking.getBooker()) : null,
                 booking.getStatus()
         );
     }
@@ -25,8 +25,8 @@ public class BookingMapper {
                 booking.getId(),
                 booking.getStart(),
                 booking.getEnd(),
-                ItemMapper.toItemDto(booking.getItem()),
-                UserMapper.toUserDto(booking.getBooker()),
+                booking.getItem() != null ? ItemMapper.toItemDto(booking.getItem()) : null,
+                booking.getBooker() != null ? UserMapper.toUserDto(booking.getBooker()) : null,
                 booking.getStatus()
         );
     }
@@ -36,8 +36,8 @@ public class BookingMapper {
                 booking.getId(),
                 booking.getStart(),
                 booking.getEnd(),
-                ItemMapper.toItemDto(booking.getItem()),
-                booking.getBooker().getId(),
+                booking.getItem() != null ? ItemMapper.toItemDto(booking.getItem()) : null,
+                booking.getBooker() != null ? booking.getBooker().getId() : null,
                 booking.getStatus()
         );
     }
@@ -48,7 +48,7 @@ public class BookingMapper {
                 booking.getStart(),
                 booking.getEnd(),
                 item,
-                UserMapper.toUser(booking.getBooker()),
+                booking.getBooker() != null ? UserMapper.toUser(booking.getBooker()) : null,
                 booking.getStatus()
         );
     }

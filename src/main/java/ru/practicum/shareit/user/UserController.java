@@ -1,7 +1,8 @@
 package ru.practicum.shareit.user;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.PathConstants;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -10,14 +11,12 @@ import ru.practicum.shareit.user.service.UserService;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping(path = PathConstants.USERS)
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class UserController {
+    @Autowired
     private UserService userService;
 
     @GetMapping

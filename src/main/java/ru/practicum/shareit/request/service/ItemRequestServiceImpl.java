@@ -11,6 +11,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.request.RequestMapper;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -27,7 +28,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private ItemRepository itemRepository;
 
     @Override
-    public ItemRequestDto create(long userId, ItemRequestDto request) {
+    public ItemRequestDto save(long userId, ItemRequestDto request) {
         User requester = checkRequesterNotFound(userId);
         request.setRequester(UserMapper.toUserDto(requester));
         request.setCreated(LocalDateTime.now());
@@ -35,37 +36,42 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestDto> get(long userId) {
-        checkRequesterNotFound(userId);
+    public List<ItemRequestDto> findAllUserRequests(long userId) {
+        User requester = checkRequesterNotFound(userId);
 
         List<ItemRequestDto> requests = itemRequestRepository.findAllByRequesterIdOrderByCreatedDesc(userId).stream()
                 .map(RequestMapper::toRequestDto)
                 .collect(Collectors.toList());
 
-        return addItems(requests);
+        requests = addItems(requests);
+
+        return requests;
     }
 
     @Override
-    public List<ItemRequestDto> getAll(long userId, int from, int size) {
+    public List<ItemRequestDto> findAll(long userId, int from, int size) {
         checkRequesterNotFound(userId);
-        if (from < 0 || size < 0) {
-            throw new ValidationException("from и size не могут быть меньше 0");
-        }
-        List<Long> ids = userRepository.findIds(userId);
+        checkPageParams(from, size);
+
+        List<Long> ids = userRepository.findIdsAllOtherUsers(userId);
         List<ItemRequestDto> requests = itemRequestRepository
                 .findAllByRequesterIdIn(ids, PageRequest.of(from / size, size))
                 .getContent().stream()
                 .map(RequestMapper::toRequestDto)
                 .collect(Collectors.toList());
-        return addItems(requests);
+
+        requests = addItems(requests);
+
+        return requests;
     }
 
     @Override
-    public ItemRequestDto getById(long userId, long id) {
+    public ItemRequestDto findById(long userId, long id) {
         checkRequesterNotFound(userId);
-        ItemRequestDto request = RequestMapper.toRequestDto(itemRequestRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Запрос не найден")));
-        return addItems(request);
+        ItemRequest request = itemRequestRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Запрос не найден"));
+        ItemRequestDto requestDto = RequestMapper.toRequestDto(request);
+        return addItems(requestDto);
     }
 
     private User checkRequesterNotFound(long userId) {
@@ -81,7 +87,16 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     private ItemRequestDto addItems(ItemRequestDto request) {
         List<Item> items = itemRepository.findAllByRequestId(request.getId());
-        request.setItems(items.stream().map(ItemMapper::toItemDto).collect(Collectors.toList()));
+
+        request.setItems(items.stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList()));
         return request;
+    }
+
+    private void checkPageParams(int from, int size) {
+        if (from < 0 || size < 0) {
+            throw new ValidationException("from и size не могут быть меньше 0");
+        }
     }
 }
