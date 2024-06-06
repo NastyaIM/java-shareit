@@ -22,7 +22,7 @@ public class ItemRequestController {
     @PostMapping
     public ItemRequestDto save(@RequestHeader("X-Sharer-User-Id") long userId,
                                @RequestBody @Valid ItemRequestDto request) {
-        log.info("Сохранение запроса")
+        log.info("Сохранение запроса");
         return itemRequestsService.save(userId, request);
     }
 
