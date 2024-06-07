@@ -49,7 +49,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDto> findAll(long userId, int from, int size) {
         checkRequesterNotFound(userId);
-        Checks.CheckPageParams(from, size);
+        Checks.checkPageParams(from, size);
 
         List<Long> ids = userRepository.findIdsAllOtherUsers(userId);
         List<ItemRequestDto> requests = itemRequestRepository

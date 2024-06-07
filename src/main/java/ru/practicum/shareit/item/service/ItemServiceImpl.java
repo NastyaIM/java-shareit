@@ -45,7 +45,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDtoGetResponse> findAllUserItems(long userId, int from, int size) {
-        Checks.CheckPageParams(from, size);
+        Checks.checkPageParams(from, size);
 
         Page<Item> items = itemRepository.findAllByOwnerId(userId, PageRequest.of(from / size, size));
         return items.getContent().stream()
@@ -116,7 +116,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.isEmpty() || text.isBlank()) {
             return new ArrayList<>();
         }
-        Checks.CheckPageParams(from, size);
+        Checks.checkPageParams(from, size);
 
         return itemRepository.search(text, PageRequest.of(from, size)).getContent()
                 .stream()
