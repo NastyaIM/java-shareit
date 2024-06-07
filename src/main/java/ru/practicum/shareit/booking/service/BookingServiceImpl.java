@@ -33,7 +33,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoResponse save(long userId, BookingDto bookingDto) {
-        Checks.DateTime(bookingDto.getStart(), bookingDto.getEnd());
+        Checks.CheckDateTime(bookingDto.getStart(), bookingDto.getEnd());
 
         User booker = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
@@ -91,7 +91,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoResponse> findAll(long userId, String state, int from, int size) {
-        Checks.PageParams(from, size);
+        Checks.CheckPageParams(from, size);
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Page<Booking> bookings;
@@ -130,7 +130,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoResponse> findAllOwner(long userId, String state, int from, int size) {
-        Checks.PageParams(from, size);
+        Checks.CheckPageParams(from, size);
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Page<Booking> bookings;
