@@ -2,7 +2,6 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.PathConstants;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -16,8 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @GetMapping
     public List<UserDto> findAll() {

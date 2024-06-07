@@ -12,11 +12,9 @@ import java.time.LocalDateTime;
 /**
  * TODO Sprint add-bookings.
  */
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 @Builder
 public class BookingDto {
     @Positive

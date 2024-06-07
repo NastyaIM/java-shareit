@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.Checks;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -32,7 +33,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoResponse save(long userId, BookingDto bookingDto) {
-        checkDateTime(bookingDto.getStart(), bookingDto.getEnd());
+        Checks.DateTime(bookingDto.getStart(), bookingDto.getEnd());
 
         User booker = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
@@ -90,7 +91,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoResponse> findAll(long userId, String state, int from, int size) {
-        checkPageParams(from, size);
+        Checks.PageParams(from, size);
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Page<Booking> bookings;
@@ -129,7 +130,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoResponse> findAllOwner(long userId, String state, int from, int size) {
-        checkPageParams(from, size);
+        Checks.PageParams(from, size);
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Page<Booking> bookings;
@@ -166,18 +167,8 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
-    private void checkDateTime(LocalDateTime start, LocalDateTime end) {
-        if (end.isBefore(start) || end.isEqual(start)) throw new ValidationException("Неправильное время");
-    }
-
     private Booking checkNotFound(long id) {
         return bookingRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Бронирование не найдено"));
-    }
-
-    private void checkPageParams(int from, int size) {
-        if (from < 0 || size < 0) {
-            throw new ValidationException("from и size не могут быть меньше 0");
-        }
     }
 }

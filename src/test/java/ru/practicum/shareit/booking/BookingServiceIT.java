@@ -79,14 +79,14 @@ public class BookingServiceIT {
     @SneakyThrows
     @Test
     void findAll() {
-        Thread.sleep(2500);
+        Thread.sleep(1100);
         int from = 0;
         int size = 10;
 
         List<BookingDtoResponse> bookingsAll = bookingService.findAll(user2.getId(), "ALL", from, size);
 
         assertEquals(3, bookingsAll.size());
-        assertEquals(List.of(bookingFuture, bookingPast, bookingCurrent), bookingsAll);
+        assertEquals(List.of(bookingFuture, bookingCurrent, bookingPast), bookingsAll);
 
         List<BookingDtoResponse> bookingsCurrent = bookingService.findAll(user2.getId(), "CURRENT", from, size);
 
@@ -108,7 +108,7 @@ public class BookingServiceIT {
         List<BookingDtoResponse> bookingsWaiting = bookingService.findAll(user2.getId(), "WAITING", from, size);
 
         assertEquals(2, bookingsWaiting.size());
-        assertEquals(List.of(bookingPast, bookingCurrent), bookingsWaiting);
+        assertEquals(List.of(bookingCurrent, bookingPast), bookingsWaiting);
 
         List<BookingDtoResponse> bookingsRejected = bookingService.findAll(user2.getId(), "REJECTED", from, size);
 
@@ -122,14 +122,14 @@ public class BookingServiceIT {
     @SneakyThrows
     @Test
     void findAllOwner() {
-        Thread.sleep(2500);
+        Thread.sleep(1100);
         int from = 0;
         int size = 10;
 
         List<BookingDtoResponse> bookingsAll = bookingService.findAllOwner(user1.getId(), "ALL", from, size);
 
         assertEquals(3, bookingsAll.size());
-        assertEquals(List.of(bookingFuture, bookingPast, bookingCurrent), bookingsAll);
+        assertEquals(List.of(bookingFuture, bookingCurrent, bookingPast), bookingsAll);
 
         List<BookingDtoResponse> bookingsCurrent = bookingService.findAllOwner(user1.getId(), "CURRENT", from, size);
 
@@ -151,7 +151,7 @@ public class BookingServiceIT {
         List<BookingDtoResponse> bookingsWaiting = bookingService.findAllOwner(user1.getId(), "WAITING", from, size);
 
         assertEquals(2, bookingsWaiting.size());
-        assertEquals(List.of(bookingPast, bookingCurrent), bookingsWaiting);
+        assertEquals(List.of(bookingCurrent, bookingPast), bookingsWaiting);
 
         List<BookingDtoResponse> bookingsRejected = bookingService.findAllOwner(user1.getId(), "REJECTED", from, size);
 

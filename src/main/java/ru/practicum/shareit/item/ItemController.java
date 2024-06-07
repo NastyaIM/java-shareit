@@ -2,7 +2,6 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.PathConstants;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -21,8 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ItemController {
-    @Autowired
-    private ItemService itemService;
+    private final ItemService itemService;
 
     @GetMapping
     public List<ItemDtoGetResponse> findAllUserItems(@RequestHeader("X-Sharer-User-Id") long userId,

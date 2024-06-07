@@ -49,8 +49,8 @@ public class BookingDataUtils {
         return BookingDto.builder()
                 .itemId(item.getId())
                 .booker(booker)
-                .start(LocalDateTime.now().plusSeconds(1L))
-                .end(LocalDateTime.now().plusSeconds(2L))
+                .start(LocalDateTime.now())
+                .end(LocalDateTime.now().plusSeconds(1L))
                 .build();
     }
 

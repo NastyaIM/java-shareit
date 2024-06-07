@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.Checks;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDtoItem;
@@ -44,7 +45,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDtoGetResponse> findAllUserItems(long userId, int from, int size) {
-        checkPageParams(from, size);
+        Checks.PageParams(from, size);
 
         Page<Item> items = itemRepository.findAllByOwnerId(userId, PageRequest.of(from / size, size));
         return items.getContent().stream()
@@ -115,7 +116,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.isEmpty() || text.isBlank()) {
             return new ArrayList<>();
         }
-        checkPageParams(from, size);
+        Checks.PageParams(from, size);
 
         return itemRepository.search(text, PageRequest.of(from, size)).getContent()
                 .stream()
@@ -162,11 +163,5 @@ public class ItemServiceImpl implements ItemService {
             return bookingDtoItem;
         }
         return null;
-    }
-
-    private void checkPageParams(int from, int size) {
-        if (from < 0 || size < 0) {
-            throw new ValidationException("from и size не могут быть меньше 0");
-        }
     }
 }

@@ -3,8 +3,8 @@ package ru.practicum.shareit.request.service;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.Checks;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -37,21 +37,19 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> findAllUserRequests(long userId) {
-        User requester = checkRequesterNotFound(userId);
+        checkRequesterNotFound(userId);
 
         List<ItemRequestDto> requests = itemRequestRepository.findAllByRequesterIdOrderByCreatedDesc(userId).stream()
                 .map(RequestMapper::toRequestDto)
                 .collect(Collectors.toList());
 
-        requests = addItems(requests);
-
-        return requests;
+        return addItems(requests);
     }
 
     @Override
     public List<ItemRequestDto> findAll(long userId, int from, int size) {
         checkRequesterNotFound(userId);
-        checkPageParams(from, size);
+        Checks.PageParams(from, size);
 
         List<Long> ids = userRepository.findIdsAllOtherUsers(userId);
         List<ItemRequestDto> requests = itemRequestRepository
@@ -60,9 +58,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .map(RequestMapper::toRequestDto)
                 .collect(Collectors.toList());
 
-        requests = addItems(requests);
-
-        return requests;
+        return addItems(requests);
     }
 
     @Override
@@ -71,7 +67,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         ItemRequest request = itemRequestRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Запрос не найден"));
         ItemRequestDto requestDto = RequestMapper.toRequestDto(request);
-        return addItems(requestDto);
+        addItems(requestDto);
+        return requestDto;
     }
 
     private User checkRequesterNotFound(long userId) {
@@ -85,18 +82,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .collect(Collectors.toList());
     }
 
-    private ItemRequestDto addItems(ItemRequestDto request) {
+    private void addItems(ItemRequestDto request) {
         List<Item> items = itemRepository.findAllByRequestId(request.getId());
 
         request.setItems(items.stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList()));
-        return request;
-    }
-
-    private void checkPageParams(int from, int size) {
-        if (from < 0 || size < 0) {
-            throw new ValidationException("from и size не могут быть меньше 0");
-        }
     }
 }
