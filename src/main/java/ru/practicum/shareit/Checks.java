@@ -12,6 +12,8 @@ public class Checks {
     }
 
     public static void CheckDateTime(LocalDateTime start, LocalDateTime end) {
-        if (end.isBefore(start) || end.isEqual(start)) throw new ValidationException("Неправильное время");
+        if (end.isBefore(start) || end.isEqual(start)) {
+            throw new ValidationException("Неправильное время");
+        }
     }
 }
