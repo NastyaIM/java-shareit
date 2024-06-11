@@ -12,7 +12,7 @@ public class CommentMapper {
         return new Comment(
                 commentDto.getId(),
                 commentDto.getText(),
-                ItemMapper.toItem(commentDto.getItem()),
+                commentDto.getItem() != null ? ItemMapper.toItem(commentDto.getItem(), null) : null,
                 author,
                 commentDto.getCreated()
         );
@@ -22,8 +22,8 @@ public class CommentMapper {
         return new CommentDto(
                 comment.getId(),
                 comment.getText(),
-                ItemMapper.toItemDto(comment.getItem()),
-                comment.getAuthor().getName(),
+                comment.getItem() != null ? ItemMapper.toItemDto(comment.getItem()) : null,
+                comment.getAuthor() != null ? comment.getAuthor().getName() : null,
                 comment.getCreated()
         );
     }

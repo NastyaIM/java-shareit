@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
@@ -36,7 +37,11 @@ public class UserServiceImpl implements UserService {
             user.setName(userDto.getName());
         }
         if (userDto.getEmail() != null) {
-            user.setEmail(userDto.getEmail());
+            if (isValidEmail(userDto.getEmail())) {
+                user.setEmail(userDto.getEmail());
+            } else {
+                throw new ValidationException("Некорректный email");
+            }
         }
         return UserMapper.toUserDto(userRepository.save(user));
     }
@@ -55,5 +60,9 @@ public class UserServiceImpl implements UserService {
     private User checkNotFound(long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователя с таким id не существует"));
+    }
+
+    private boolean isValidEmail(String email) {
+        return email.contains("@") && email.length() > 5;
     }
 }
