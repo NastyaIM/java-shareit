@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.exceptions.NotFoundException;
@@ -135,7 +136,7 @@ class BookingServiceImplTest {
 
     @Test
     void findAllWhenStateIsAll() {
-        String state = "ALL";
+        BookingState state = BookingState.ALL;
         int from = 0;
         int size = 10;
         when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
@@ -149,7 +150,7 @@ class BookingServiceImplTest {
 
     @Test
     void findAllWhenStateIsCurrent() {
-        String state = "CURRENT";
+        BookingState state = BookingState.CURRENT;
         int from = 0;
         int size = 10;
         when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
@@ -165,7 +166,7 @@ class BookingServiceImplTest {
 
     @Test
     void findAllWhenStateIsPast() {
-        String state = "PAST";
+        BookingState state = BookingState.PAST;
         int from = 0;
         int size = 10;
         when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
@@ -181,7 +182,7 @@ class BookingServiceImplTest {
 
     @Test
     void findAllWhenStateIsFuture() {
-        String state = "FUTURE";
+        BookingState state = BookingState.FUTURE;
         int from = 0;
         int size = 10;
         when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
@@ -204,26 +205,16 @@ class BookingServiceImplTest {
                 any(BookingStatus.class), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(List.of(booking)));
 
-        bookingService.findAll(user1.getId(), "WAITING", from, size);
-        bookingService.findAll(user1.getId(), "REJECTED", from, size);
+        bookingService.findAll(user1.getId(), BookingState.WAITING, from, size);
+        bookingService.findAll(user1.getId(), BookingState.REJECTED, from, size);
 
         verify(bookingRepository, times(2)).findByBookerIdAndStatusIsOrderByStartDesc(anyLong(),
                 any(BookingStatus.class), any(PageRequest.class));
     }
 
-//    @Test
-//    void findAllWhenStateIsUnknown() {
-//        String state = "UNKNOWN";
-//        int from = 0;
-//        int size = 10;
-//        when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
-//
-//        assertThrows(ValidationException.class, () -> bookingService.findAll(user1.getId(), state, from, size));
-//    }
-
     @Test
     void findAllOwnerWhenStateIsAll() {
-        String state = "ALL";
+        BookingState state = BookingState.ALL;
         int from = 0;
         int size = 10;
         when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
@@ -237,7 +228,7 @@ class BookingServiceImplTest {
 
     @Test
     void findAllOwnerWhenStateIsCurrent() {
-        String state = "CURRENT";
+        BookingState state = BookingState.CURRENT;
         int from = 0;
         int size = 10;
         when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
@@ -253,7 +244,7 @@ class BookingServiceImplTest {
 
     @Test
     void findAllOwnerWhenStateIsPast() {
-        String state = "PAST";
+        BookingState state = BookingState.PAST;
         int from = 0;
         int size = 10;
         when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
@@ -269,7 +260,7 @@ class BookingServiceImplTest {
 
     @Test
     void findAllOwnerWhenStateIsFuture() {
-        String state = "FUTURE";
+        BookingState state = BookingState.FUTURE;
         int from = 0;
         int size = 10;
         when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
@@ -292,20 +283,10 @@ class BookingServiceImplTest {
                 any(BookingStatus.class), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(List.of(booking)));
 
-        bookingService.findAllOwner(user1.getId(), "WAITING", from, size);
-        bookingService.findAllOwner(user1.getId(), "REJECTED", from, size);
+        bookingService.findAllOwner(user1.getId(), BookingState.WAITING, from, size);
+        bookingService.findAllOwner(user1.getId(), BookingState.REJECTED, from, size);
 
         verify(bookingRepository, times(2)).findByItemOwnerIdAndStatusIsOrderByStartDesc(anyLong(),
                 any(BookingStatus.class), any(PageRequest.class));
     }
-
-//    @Test
-//    void findAllOwnerWhenStateIsUnknown() {
-//        String state = "UNKNOWN";
-//        int from = 0;
-//        int size = 10;
-//        when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
-//
-//        assertThrows(ValidationException.class, () -> bookingService.findAllOwner(user1.getId(), state, from, size));
-//    }
 }

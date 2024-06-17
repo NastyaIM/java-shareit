@@ -6,6 +6,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.PathConstants;
 import ru.practicum.shareit.booking.dto.BookItemRequestDto;
@@ -16,10 +17,8 @@ import java.util.Map;
 
 @Service
 public class BookingClient extends BaseClient {
-//    private static final String API_PREFIX = "/bookings";
-
     @Autowired
-    public BookingClient(@Value("@{shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public BookingClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + PathConstants.BOOKINGS))
@@ -56,7 +55,8 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> approve(long userId, Long bookingId, boolean approved) {
+        Map<String, Object> parameters = Map.of("approved", approved);
         return patch("/" + bookingId + "?approved={approved}", userId,
-                Map.of("approved", approved));
+                parameters, null);
     }
 }

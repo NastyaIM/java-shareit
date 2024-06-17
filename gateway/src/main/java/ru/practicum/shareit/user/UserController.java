@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.PathConstants;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import javax.validation.Path;
 import javax.validation.Valid;
 
 @Controller

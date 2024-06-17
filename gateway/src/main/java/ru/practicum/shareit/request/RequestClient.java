@@ -16,7 +16,7 @@ import java.util.Map;
 @Service
 public class RequestClient extends BaseClient {
     @Autowired
-    public RequestClient(@Value("@{shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public RequestClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + PathConstants.REQUESTS))

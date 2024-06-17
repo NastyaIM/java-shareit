@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.PathConstants;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
+import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
 
 import java.time.LocalDateTime;
@@ -97,14 +98,14 @@ class BookingControllerTest {
     @SneakyThrows
     @Test
     void findAll() {
-        String state = "ALL";
+        BookingState state = BookingState.ALL;
         int from = 0;
         int size = 10;
         when(bookingService.findAll(userId, state, from, size)).thenReturn(List.of(bookingDtoResponse));
 
         mockMvc.perform(get(PathConstants.BOOKINGS)
                         .header("X-Sharer-User-Id", userId)
-                        .param("state", state)
+                        .param("state", state.toString())
                         .param("from", String.valueOf(from))
                         .param("size", String.valueOf(size)))
                 .andExpect(status().isOk())
@@ -119,14 +120,14 @@ class BookingControllerTest {
     @SneakyThrows
     @Test
     void findAllOwner() {
-        String state = "ALL";
+        BookingState state = BookingState.ALL;
         int from = 0;
         int size = 10;
         when(bookingService.findAllOwner(userId, state, from, size)).thenReturn(List.of());
 
         mockMvc.perform(get(PathConstants.BOOKINGS + PathConstants.BOOKINGS_OWNER)
                         .header("X-Sharer-User-Id", userId)
-                        .param("state", state)
+                        .param("state", state.toString())
                         .param("from", String.valueOf(from))
                         .param("size", String.valueOf(size)))
                 .andExpect(status().isOk());

@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
+import ru.practicum.shareit.booking.model.BookingState;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface BookingService {
 
     BookingDtoResponse findById(long userId, long id);
 
-    List<BookingDtoResponse> findAll(long userId, String state, int from, int size);
+    List<BookingDtoResponse> findAll(long userId, BookingState state, int from, int size);
 
-    List<BookingDtoResponse> findAllOwner(long userId, String state, int from, int size);
+    List<BookingDtoResponse> findAllOwner(long userId, BookingState state, int from, int size);
 }

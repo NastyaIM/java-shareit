@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
+import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.ValidationException;
@@ -83,40 +84,37 @@ public class BookingServiceIT {
         int from = 0;
         int size = 10;
 
-        List<BookingDtoResponse> bookingsAll = bookingService.findAll(user2.getId(), "ALL", from, size);
+        List<BookingDtoResponse> bookingsAll = bookingService.findAll(user2.getId(), BookingState.ALL, from, size);
 
         assertEquals(3, bookingsAll.size());
         assertEquals(List.of(bookingFuture, bookingCurrent, bookingPast), bookingsAll);
 
-        List<BookingDtoResponse> bookingsCurrent = bookingService.findAll(user2.getId(), "CURRENT", from, size);
+        List<BookingDtoResponse> bookingsCurrent = bookingService.findAll(user2.getId(), BookingState.CURRENT, from, size);
 
         assertEquals(1, bookingsCurrent.size());
         assertEquals(List.of(bookingCurrent), bookingsCurrent);
 
-        List<BookingDtoResponse> bookingsPast = bookingService.findAll(user2.getId(), "PAST", from, size);
+        List<BookingDtoResponse> bookingsPast = bookingService.findAll(user2.getId(), BookingState.PAST, from, size);
 
         assertEquals(1, bookingsPast.size());
         assertEquals(List.of(bookingPast), bookingsPast);
 
-        List<BookingDtoResponse> bookingsFuture = bookingService.findAll(user2.getId(), "FUTURE", from, size);
+        List<BookingDtoResponse> bookingsFuture = bookingService.findAll(user2.getId(), BookingState.FUTURE, from, size);
 
         assertEquals(1, bookingsFuture.size());
         assertEquals(List.of(bookingFuture), bookingsFuture);
 
         bookingFuture = bookingService.approve(user1.getId(), bookingFuture.getId(), false);
 
-        List<BookingDtoResponse> bookingsWaiting = bookingService.findAll(user2.getId(), "WAITING", from, size);
+        List<BookingDtoResponse> bookingsWaiting = bookingService.findAll(user2.getId(), BookingState.WAITING, from, size);
 
         assertEquals(2, bookingsWaiting.size());
         assertEquals(List.of(bookingCurrent, bookingPast), bookingsWaiting);
 
-        List<BookingDtoResponse> bookingsRejected = bookingService.findAll(user2.getId(), "REJECTED", from, size);
+        List<BookingDtoResponse> bookingsRejected = bookingService.findAll(user2.getId(), BookingState.REJECTED, from, size);
 
         assertEquals(1, bookingsRejected.size());
         assertEquals(List.of(bookingFuture), bookingsRejected);
-//
-//        assertThrows(ValidationException.class, () ->
-//                bookingService.findAll(user2.getId(), "Unknown", from, size));
     }
 
     @SneakyThrows
@@ -126,39 +124,36 @@ public class BookingServiceIT {
         int from = 0;
         int size = 10;
 
-        List<BookingDtoResponse> bookingsAll = bookingService.findAllOwner(user1.getId(), "ALL", from, size);
+        List<BookingDtoResponse> bookingsAll = bookingService.findAllOwner(user1.getId(), BookingState.ALL, from, size);
 
         assertEquals(3, bookingsAll.size());
         assertEquals(List.of(bookingFuture, bookingCurrent, bookingPast), bookingsAll);
 
-        List<BookingDtoResponse> bookingsCurrent = bookingService.findAllOwner(user1.getId(), "CURRENT", from, size);
+        List<BookingDtoResponse> bookingsCurrent = bookingService.findAllOwner(user1.getId(), BookingState.CURRENT, from, size);
 
         assertEquals(1, bookingsCurrent.size());
         assertEquals(List.of(bookingCurrent), bookingsCurrent);
 
-        List<BookingDtoResponse> bookingsPast = bookingService.findAllOwner(user1.getId(), "PAST", from, size);
+        List<BookingDtoResponse> bookingsPast = bookingService.findAllOwner(user1.getId(), BookingState.PAST, from, size);
 
         assertEquals(1, bookingsPast.size());
         assertEquals(List.of(bookingPast), bookingsPast);
 
-        List<BookingDtoResponse> bookingsFuture = bookingService.findAllOwner(user1.getId(), "FUTURE", from, size);
+        List<BookingDtoResponse> bookingsFuture = bookingService.findAllOwner(user1.getId(), BookingState.FUTURE, from, size);
 
         assertEquals(1, bookingsFuture.size());
         assertEquals(List.of(bookingFuture), bookingsFuture);
 
         bookingFuture = bookingService.approve(user1.getId(), bookingFuture.getId(), false);
 
-        List<BookingDtoResponse> bookingsWaiting = bookingService.findAllOwner(user1.getId(), "WAITING", from, size);
+        List<BookingDtoResponse> bookingsWaiting = bookingService.findAllOwner(user1.getId(), BookingState.WAITING, from, size);
 
         assertEquals(2, bookingsWaiting.size());
         assertEquals(List.of(bookingCurrent, bookingPast), bookingsWaiting);
 
-        List<BookingDtoResponse> bookingsRejected = bookingService.findAllOwner(user1.getId(), "REJECTED", from, size);
+        List<BookingDtoResponse> bookingsRejected = bookingService.findAllOwner(user1.getId(), BookingState.REJECTED, from, size);
 
         assertEquals(1, bookingsRejected.size());
         assertEquals(List.of(bookingFuture), bookingsRejected);
-
-//        assertThrows(ValidationException.class, () ->
-//                bookingService.findAllOwner(user1.getId(), "Unknown", from, size));
     }
 }

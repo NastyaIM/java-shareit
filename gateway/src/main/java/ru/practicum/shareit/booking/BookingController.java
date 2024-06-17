@@ -10,10 +10,12 @@ import ru.practicum.shareit.Checks;
 import ru.practicum.shareit.PathConstants;
 import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.BookingState;
+import ru.practicum.shareit.exceptions.ValidationException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.Optional;
 
 
 @Controller
@@ -66,7 +68,7 @@ public class BookingController {
     @PatchMapping(PathConstants.BY_ID)
     public ResponseEntity<Object> approve(@RequestHeader("X-Sharer-User-Id") long userId,
                                           @PathVariable Long id,
-                                          @RequestParam boolean approved) {
+                                          @RequestParam(name = "approved") boolean approved) {
         log.info("Approve booking{}, userId={}", id, userId);
         return bookingClient.approve(userId, id, approved);
     }

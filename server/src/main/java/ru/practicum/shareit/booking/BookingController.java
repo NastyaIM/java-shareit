@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.PathConstants;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
+import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
 
 import javax.validation.Valid;
@@ -49,7 +50,7 @@ public class BookingController {
                                             @RequestParam(defaultValue = "0") int from,
                                             @RequestParam(defaultValue = "10") int size) {
         log.info("Получение бронирований пользователя userId");
-        return bookingService.findAll(userId, state, from, size);
+        return bookingService.findAll(userId, BookingState.from(state), from, size);
     }
 
     @GetMapping(PathConstants.BOOKINGS_OWNER)
@@ -58,6 +59,6 @@ public class BookingController {
                                                  @RequestParam(defaultValue = "0") int from,
                                                  @RequestParam(defaultValue = "10") int size) {
         log.info("Получение бронирований владельца");
-        return bookingService.findAllOwner(userId, state, from, size);
+        return bookingService.findAllOwner(userId, BookingState.from(state), from, size);
     }
 }
