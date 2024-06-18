@@ -10,5 +10,4 @@ public class PathConstants {
     public static final String BOOKINGS_OWNER = "/owner";
     public static final String REQUESTS = "/requests";
     public static final String ALL = "/all";
-
 }

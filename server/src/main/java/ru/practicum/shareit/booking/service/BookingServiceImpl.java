@@ -33,8 +33,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoResponse save(long userId, BookingDto bookingDto) {
-//        Checks.checkDateTime(bookingDto.getStart(), bookingDto.getEnd());
-
         User booker = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Item item = itemRepository.findById(bookingDto.getItemId())
