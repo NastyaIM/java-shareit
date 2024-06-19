@@ -9,7 +9,6 @@ import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -24,7 +23,7 @@ public class BookingController {
 
     @PostMapping
     public BookingDtoResponse save(@RequestHeader("X-Sharer-User-Id") long userId,
-                                   @Valid @RequestBody BookingDto bookingDto) {
+                                   @RequestBody BookingDto bookingDto) {
         log.info("Добавление нового бронирования");
         return bookingService.save(userId, bookingDto);
     }

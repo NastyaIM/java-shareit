@@ -66,12 +66,12 @@
     </dependencies>
 
 	<build>
-		<resources>
-			<resource>
-				<directory>server1/src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
+<!--		<resources>-->
+<!--			<resource>-->
+<!--				<directory>server/src/main/resources</directory>-->
+<!--				<filtering>true</filtering>-->
+<!--			</resource>-->
+<!--		</resources>-->
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

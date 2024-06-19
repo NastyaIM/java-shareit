@@ -7,7 +7,6 @@ import ru.practicum.shareit.PathConstants;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -42,7 +41,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto save(@Valid @RequestBody UserDto user) {
+    public UserDto save(@RequestBody UserDto user) {
         log.info("Добавление нового пользователя");
         return userService.save(user);
     }

@@ -7,10 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-
 /**
  * TODO Sprint add-controllers.
  */
@@ -20,14 +16,9 @@ import javax.validation.constraints.Positive;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ItemDto {
-    @Positive
     private Long id;
-    @NotEmpty
-    @NotNull
     private String name;
-    @NotNull
     private String description;
-    @NotNull
     private Boolean available;
     private UserDto owner;
     private Long requestId;

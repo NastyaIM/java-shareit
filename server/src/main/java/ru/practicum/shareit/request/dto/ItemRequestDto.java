@@ -4,8 +4,6 @@ import lombok.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,9 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ItemRequestDto {
-    @Positive
     private Long id;
-    @NotNull
     private String description;
     private UserDto requester;
     @EqualsAndHashCode.Exclude

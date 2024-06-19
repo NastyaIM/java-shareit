@@ -7,7 +7,6 @@ import ru.practicum.shareit.PathConstants;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,7 +18,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ItemRequestDto save(@RequestHeader("X-Sharer-User-Id") long userId,
-                               @RequestBody @Valid ItemRequestDto request) {
+                               @RequestBody ItemRequestDto request) {
         log.info("Сохранение запроса");
         return itemRequestsService.save(userId, request);
     }

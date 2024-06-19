@@ -9,7 +9,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoGetResponse;
 import ru.practicum.shareit.item.service.ItemService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -46,7 +45,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto save(@RequestHeader("X-Sharer-User-Id") long userId,
-                        @Valid @RequestBody ItemDto item) {
+                        @RequestBody ItemDto item) {
         log.info("Добавление нового предмета");
         return itemService.save(item, userId);
     }
@@ -63,7 +62,7 @@ public class ItemController {
     @PostMapping(PathConstants.BY_ID + PathConstants.ITEMS_COMMENTS)
     public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId,
                                  @PathVariable long id,
-                                 @Valid @RequestBody CommentDto comment) {
+                                 @RequestBody CommentDto comment) {
         log.info("Добавление комментария");
         return itemService.addComment(userId, id, comment);
     }
